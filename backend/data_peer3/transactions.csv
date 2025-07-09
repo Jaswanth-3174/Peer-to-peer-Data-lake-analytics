@@ -1,0 +1,11 @@
+transaction_id,order_id,payment_method,amount,transaction_date,status
+2001,1001,Credit Card,1299.99,2024-01-15,Completed
+2002,1002,PayPal,179.98,2024-01-16,Completed
+2003,1003,Debit Card,89.97,2024-01-17,Completed
+2004,1004,Credit Card,299.99,2024-01-18,Completed
+2005,1005,PayPal,159.98,2024-01-19,Pending
+2006,1006,Credit Card,599.99,2024-01-20,Completed
+2007,1007,Cash,149.99,2024-01-21,Completed
+2008,1008,Credit Card,129.99,2024-01-22,Failed
+2009,1009,Debit Card,99.98,2024-01-23,Completed
+2010,1010,PayPal,199.99,2024-01-24,Completed

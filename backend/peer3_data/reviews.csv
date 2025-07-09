@@ -1,0 +1,11 @@
+review_id,product_id,customer_id,rating,review_text,review_date
+3001,1,101,5,Excellent laptop with great performance,2024-01-20
+3002,3,102,4,Good coffee maker but could be faster,2024-01-21
+3003,4,103,5,Perfect wireless mouse very responsive,2024-01-22
+3004,2,104,4,Comfortable chair good for long hours,2024-01-23
+3005,6,105,3,Sound quality is okay but not great,2024-01-24
+3006,5,106,5,Amazing standing desk very sturdy,2024-01-25
+3007,8,107,4,Air fryer works well easy to use,2024-01-26
+3008,9,108,2,Keyboard is too loud for my taste,2024-01-27
+3009,7,109,4,Nice lamp provides good lighting,2024-01-28
+3010,10,110,5,Solid bookshelf perfect size,2024-01-29
