@@ -1,0 +1,36 @@
+{
+  "name": "p2p-data-lake-analytics",
+  "version": "1.0.0",
+  "description": "Peer-to-Peer Data Lake Analytics System",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "jest",
+    "peer": "node src/peer.js",
+    "network": "node scripts/start-network.js",
+    "upload-sample": "node scripts/upload-sample-data.js",
+    "install-deps": "npm install"
+  },
+  "keywords": ["p2p", "data-lake", "analytics", "distributed"],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2",
+    "csv-parser": "^3.0.0",
+    "multer": "^1.4.5-lts.1",
+    "cors": "^2.8.5",
+    "ws": "^8.14.0",
+    "uuid": "^9.0.0",
+    "fs-extra": "^11.1.1",
+    "chalk": "^4.1.2",
+    "commander": "^11.0.0",
+    "simple-peer": "^9.11.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "jest": "^29.6.2"
+  }
+}

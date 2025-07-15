@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P Data Lake Analytics</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #1a202c;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header .subtitle {
+            color: #64748b;
+            font-size: 1.2em;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            color: #1e293b;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .status-item {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .status-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .status-label {
+            color: #64748b;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .query-section {
+            grid-column: 1 / -1;
+        }
+
+        .query-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+            resize: vertical;
+            background: #f8fafc;
+        }
+
+        .query-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+
+        .query-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .results-table th {
+            background: #1e293b;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .results-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .results-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .peer-item, .dataset-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .peer-id {
+            font-family: 'Consolas', monospace;
+            font-size: 0.9em;
+            color: #475569;
+            line-height: 1.4;
+        }
+
+        .peer-status {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+            background: #10b981;
+            color: white;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .error {
+            background: #fecaca;
+            color: #dc2626;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .success {
+            background: #bbf7d0;
+            color: #059669;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .emoji {
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            .query-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌊 P2P Data Lake Analytics</h1>
+            <div class="subtitle">Distributed Data Analytics Platform</div>
+        </div>
+
+        <div class="dashboard">
+            <!-- Network Status Card -->
+            <div class="card">
+                <h3>
+                    <span class="emoji">🌐</span>
+                    Network Status
+                </h3>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <span class="status-value" id="peerCount">0</span>
+                        <div class="status-label">Connected Peers</div>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-value" id="datasetCount">0</span>
+                        <div class="status-label">Datasets</div>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-value" id="nodePort">-</span>
+                        <div class="status-label">Node Port</div>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-value" id="networkStatus">✅</span>
+                        <div class="status-label">Status</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connected Peers Card -->
+            <div class="card">
+                <h3>
+                    <span class="emoji">👥</span>
+                    Connected Peers
+                </h3>
+                <div id="peersList">
+                    <div class="loading">Loading peers...</div>
+                </div>
+            </div>
+
+            <!-- Available Datasets Card -->
+            <div class="card">
+                <h3>
+                    <span class="emoji">📊</span>
+                    Available Datasets
+                </h3>
+                <div id="datasetsList">
+                    <div class="loading">Loading datasets...</div>
+                </div>
+            </div>
+
+            <!-- SQL Query Interface -->
+            <div class="card query-section">
+                <h3>
+                    <span class="emoji">⚡</span>
+                    SQL Query Interface
+                </h3>
+                <textarea 
+                    id="queryInput" 
+                    class="query-input" 
+                    placeholder="Enter your SQL query here...
+
+Examples:
+• SHOW TABLES
+• SELECT * FROM employees
+• SELECT * FROM products"
+                ></textarea>
+                
+                <div class="query-buttons">
+                    <button class="btn btn-primary" onclick="executeQuery()">
+                        <span class="emoji">🚀</span>
+                        Execute Query
+                    </button>
+                    <button class="btn btn-secondary" onclick="loadQuery('SHOW TABLES')">
+                        <span class="emoji">📋</span> Show Tables
+                    </button>
+                    <button class="btn btn-secondary" onclick="loadQuery('SELECT * FROM employees')">
+                        <span class="emoji">👥</span> All Employees
+                    </button>
+                    <button class="btn btn-secondary" onclick="loadQuery('SELECT * FROM products')">
+                        <span class="emoji">📦</span> All Products
+                    </button>
+                </div>
+
+                <div id="queryResults"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('Starting application...');
+        
+        let socket;
+        let currentPort = window.location.port || '3000';
+
+        // Initialize Socket.IO
+        try {
+            socket = io();
+            console.log('Socket.IO initialized');
+        } catch (e) {
+            console.error('Socket.IO failed to initialize:', e);
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded');
+            document.getElementById('nodePort').textContent = currentPort;
+            loadPeers();
+            loadDatasets();
+        });
+
+        // Socket event listeners
+        if (socket) {
+            socket.on('peer-joined', (peer) => {
+                console.log('Peer joined:', peer);
+                loadPeers();
+            });
+
+            socket.on('peer-left', (peerId) => {
+                console.log('Peer left:', peerId);
+                loadPeers();
+            });
+
+            socket.on('peers-list', (peers) => {
+                console.log('Received peers list:', peers);
+                updatePeersList(peers);
+            });
+
+            socket.on('datasets-updated', () => {
+                console.log('Datasets updated');
+                loadDatasets();
+            });
+        }
+
+        // Load functions
+        function loadPeers() {
+            fetch('/api/peers')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Peers data:', data);
+                    updatePeersList(data.peers || []);
+                })
+                .catch(error => {
+                    console.error('Error loading peers:', error);
+                    document.getElementById('peersList').innerHTML = '<div class="error">❌ Error loading peers</div>';
+                });
+        }
+
+        function updatePeersList(peers) {
+            const peersList = document.getElementById('peersList');
+            const peerCount = document.getElementById('peerCount');
+            
+            peerCount.textContent = peers.length;
+            
+            if (peers.length === 0) {
+                peersList.innerHTML = '<div class="loading">🔍 No peers connected</div>';
+                return;
+            }
+            
+            peersList.innerHTML = peers.map(peer => `
+                <div class="peer-item">
+                    <div class="peer-id">
+                        <strong>Node:</strong> ${peer.nodeId || peer.id}<br>
+                        <strong>Port:</strong> ${peer.port || 'Unknown'}
+                    </div>
+                    <span class="peer-status">Connected</span>
+                </div>
+            `).join('');
+        }
+
+        function loadDatasets() {
+            fetch('/api/datasets')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Datasets data:', data);
+                    updateDatasetsList(data.datasets || []);
+                })
+                .catch(error => {
+                    console.error('Error loading datasets:', error);
+                    document.getElementById('datasetsList').innerHTML = '<div class="error">❌ Error loading datasets</div>';
+                });
+        }
+
+        function updateDatasetsList(datasets) {
+            const datasetsList = document.getElementById('datasetsList');
+            const datasetCount = document.getElementById('datasetCount');
+            
+            datasetCount.textContent = datasets.length;
+            
+            if (datasets.length === 0) {
+                datasetsList.innerHTML = '<div class="loading">📂 No datasets available</div>';
+                return;
+            }
+            
+            datasetsList.innerHTML = datasets.map(dataset => `
+                <div class="dataset-item">
+                    <strong>📊 ${dataset.name}</strong><br>
+                    <small>📝 ${dataset.rowCount || 0} rows, 📋 ${dataset.columnCount || 0} columns</small>
+                </div>
+            `).join('');
+        }
+
+        // Query functions
+        function loadQuery(query) {
+            document.getElementById('queryInput').value = query;
+        }
+
+        function executeQuery() {
+            const query = document.getElementById('queryInput').value.trim();
+            const resultsDiv = document.getElementById('queryResults');
+            
+            if (!query) {
+                resultsDiv.innerHTML = '<div class="error">⚠️ Please enter a query</div>';
+                return;
+            }
+            
+            resultsDiv.innerHTML = '<div class="loading">🔄 Executing query...</div>';
+            
+            fetch('/api/query', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayResults(data.results);
+                } else {
+                    resultsDiv.innerHTML = `<div class="error">❌ ${data.error || 'Query failed'}</div>`;
+                }
+            })
+            .catch(error => {
+                console.error('Query error:', error);
+                resultsDiv.innerHTML = '<div class="error">❌ Network error</div>';
+            });
+        }
+
+        function displayResults(results) {
+            const resultsDiv = document.getElementById('queryResults');
+            
+            if (!results || results.length === 0) {
+                resultsDiv.innerHTML = '<div class="success">✅ Query executed successfully but returned no results</div>';
+                return;
+            }
+            
+            const columns = Object.keys(results[0]);
+            const tableHtml = `
+                <div class="success">✅ Query executed successfully - ${results.length} rows returned</div>
+                <table class="results-table">
+                    <thead>
+                        <tr>${columns.map(col => `<th>${col}</th>`).join('')}</tr>
+                    </thead>
+                    <tbody>
+                        ${results.map(row => 
+                            `<tr>${columns.map(col => `<td>${row[col] || ''}</td>`).join('')}</tr>`
+                        ).join('')}
+                    </tbody>
+                </table>
+            `;
+            
+            resultsDiv.innerHTML = tableHtml;
+        }
+
+        console.log('Application initialized');
+    </script>
+</body>
+</html>

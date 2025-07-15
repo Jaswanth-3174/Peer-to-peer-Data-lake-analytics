@@ -1,0 +1,21 @@
+product_id,product_name,category,price,stock_quantity,supplier
+1,Wireless Headphones,Electronics,99.99,150,TechCorp
+2,Coffee Maker,Home Appliances,79.99,75,HomePlus
+3,Running Shoes,Sports,129.99,200,SportMax
+4,Laptop Bag,Accessories,49.99,120,TechCorp
+5,Yoga Mat,Sports,29.99,180,FitGear
+6,Smart Watch,Electronics,199.99,90,TechCorp
+7,Blender,Home Appliances,89.99,60,HomePlus
+8,Basketball,Sports,24.99,300,SportMax
+9,Phone Case,Accessories,19.99,250,TechCorp
+10,Protein Powder,Health,39.99,100,FitGear
+11,Bluetooth Speaker,Electronics,69.99,140,TechCorp
+12,Air Fryer,Home Appliances,129.99,45,HomePlus
+13,Tennis Racket,Sports,79.99,80,SportMax
+14,Laptop Stand,Accessories,34.99,110,TechCorp
+15,Resistance Bands,Sports,19.99,200,FitGear
+16,Tablet,Electronics,299.99,70,TechCorp
+17,Rice Cooker,Home Appliances,59.99,85,HomePlus
+18,Soccer Ball,Sports,19.99,250,SportMax
+19,Wireless Charger,Accessories,29.99,160,TechCorp
+20,Vitamin D,Health,14.99,300,FitGear

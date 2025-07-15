@@ -1,0 +1,30 @@
+{
+  "network": {
+    "defaultPort": 3000,
+    "bootstrapNodes": [],
+    "maxPeers": 50,
+    "discoveryInterval": 30000,
+    "heartbeatInterval": 10000
+  },
+  "storage": {
+    "dataPath": "./data",
+    "metadataPath": "./metadata",
+    "replicationFactor": 3,
+    "chunkSize": 1048576
+  },
+  "analytics": {
+    "engine": "duckdb",
+    "maxQueryTime": 300000,
+    "cacheSize": "1GB",
+    "tempPath": "./temp"
+  },
+  "security": {
+    "enableEncryption": true,
+    "keyPath": "./keys",
+    "allowedOrigins": ["http://localhost:3000"]
+  },
+  "logging": {
+    "level": "info",
+    "logPath": "./logs"
+  }
+}
