@@ -7,7 +7,7 @@ A fully decentralized analytics framework that runs entirely locally without clo
 - **Decentralized Architecture**: Each peer runs independently on different ports
 - **Local Data Storage**: CSV datasets stored locally on each peer  
 - **SQL Query Engine**: DuckDB for high-performance SQL analytics
-- **Cross-Peer Queries**: Query multiple peers simultaneously and aggregate results
+- **Cross Peer Queries**: Query multiple peers simultaneously and aggregate results
 - **Modern React Dashboard**: Beautiful UI with Tailwind CSS
 - **Interactive Data Visualization**: Charts and tables using Recharts
 - **REST API**: FastAPI backend for each peer with full CORS support
