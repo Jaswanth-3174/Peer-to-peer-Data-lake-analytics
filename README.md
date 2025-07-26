@@ -1,4 +1,4 @@
-# A Peer-to-Peer Data Lake Analytics Framework
+# Peer-to-Peer Data Lake Analytics Framework
 
 A fully decentralized analytics framework that runs entirely locally without cloud dependencies. Built with React.js, Tailwind CSS, Recharts for the frontend and Python FastAPI with DuckDB for the backend.
 
